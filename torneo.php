@@ -22,6 +22,12 @@
     <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
+
+    <script>
+        function copyToClipboard() {
+            window.prompt("Copia y Envia esta pagina a tus amigos:", document.URL);
+        }
+    </script>
 </head>
 
 <body>
@@ -50,6 +56,22 @@
 
 <div class="container">
 
+    <?php
+        $torneos_url = "http://localhost/prodeRest/public/torneos/";
+        if ( !isset($_GET['id']) || $_GET['id'] == "" || !is_numeric($_GET['id']) ){
+            echo "<h2 align='center'>No existe este torneo</h2>";
+            die();
+        } else {
+            $json = file_get_contents( $torneos_url . $_GET['id']);
+            $obj = json_decode($json)->data;
+            //Si no existe el Torneo
+            if (!$obj) {
+                echo "<h2 align='center'>No existe este torneo</h2>";
+                die();
+            }
+        }
+    ?>
+
     <div class="row">
         <div class="col-md-4 col-md-offset-4">
             &nbsp;
@@ -59,17 +81,18 @@
 
     <div class="row">
         <div class="col-md-4 col-md-offset-4">
-            <h2 class="text-center">"Los pibes de Visa"</h2>
+            <h2 class="text-center">"<?php echo $obj->name; ?>"</h2>
         </div>
     </div>
 
 
     <div class="row">
         <div class="col-md-4 col-md-offset-4">
-            <button type="button" class="btn btn-primary btn-lg center-block">
-                <span class="glyphicon glyphicon-user" aria-hidden="true"></span> Invitar Jugador
+            <button type="button" class="btn btn-primary btn-lg center-block" onclick="copyToClipboard()">
+                <span class="glyphicon glyphicon-user" aria-hidden="true"></span>Invitar Amigo
             </button>
-            <p class="lead text-center">Clave: <i>'Visa2015'</i> </p>
+
+            <p class="lead text-center">Clave: <i>'<?php echo $obj->pass; ?>'</i> </p>
         </div>
     </div>
 
@@ -154,5 +177,10 @@
 <!-- Placed at the end of the document so the pages load faster -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
+
+<script>
+    $("#torneoUrl").val(document.URL);
+</script>
+
 </body>
 </html>

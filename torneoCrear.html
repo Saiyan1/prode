@@ -26,7 +26,6 @@
 
 <body>
 
-
 <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container">
         <div class="navbar-header">
@@ -66,14 +65,17 @@
 
     <div class="row">
         <div class="col-md-4 col-md-offset-4">
-            <form>
+            <form id="torneoForm" method="post" action="">
+
+                <input type="hidden" name="user_id" id="user_id" value="999"/>      <!--TODO-->
+
                 <div class="form-group">
-                    <label for="torneoNombre">Nombre Torneo</label>
-                    <input type="text" class="form-control" id="torneoNombre" placeholder="Nombre de Torneo">
+                    <label for="name">Nombre Torneo</label>
+                    <input type="text" class="form-control" id="name" name="name" placeholder="Nombre de Torneo">
                 </div>
                 <div class="form-group">
-                    <label for="torneoClave">Clave del torneo <i>(para pasar SOLO a tus amigos)</i></label>
-                    <input type="password" class="form-control" id="torneoClave" placeholder="Clave secreta">
+                    <label for="pass">Clave del torneo <i>(para pasar SOLO a tus amigos)</i></label>
+                    <input type="text" class="form-control" id="pass" name="pass" readonly>
                 </div>
                 <button type="submit" class="btn btn-lg btn-danger">Crear Torneo</button>
             </form>
@@ -104,5 +106,79 @@
 <!-- Placed at the end of the document so the pages load faster -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
+<script src="js/notify.min.js"></script>
+
+<!-- FormValidation CSS file -->
+<link rel="stylesheet" href="vendor/formvalidation/dist/css/formValidation.min.css">
+<!-- FormValidation plugin and the class supports validating Bootstrap form -->
+<script src="vendor/formvalidation/dist/js/formValidation.min.js"></script>
+<script src="vendor/formvalidation/dist/js/framework/bootstrap.min.js"></script>
+<!-- FormValidation plugin lang -->
+<script type="text/javascript" src="vendor/formvalidation/dist/js/language/es_ES.js"></script>
+
+<script>
+
+    function randomIntFromInterval(min,max) {
+        return Math.floor(Math.random()*(max-min+1)+min);
+    }
+
+    $( document ).ready(function() {
+        $("#pass").val(randomIntFromInterval(1000,9999));
+
+
+        $('#torneoForm')
+                .formValidation({
+                    framework: 'bootstrap',
+                    icon: {
+                        valid: 'glyphicon glyphicon-ok',
+                        invalid: 'glyphicon glyphicon-remove',
+                        validating: 'glyphicon glyphicon-refresh'
+                    },
+                    fields: {
+                        name: {
+                            validators: {
+                                notEmpty: {
+        //                            message: 'The name is required'
+                                },
+                                stringLength: {
+                                    min: 1,
+                                    max: 100
+        //                            message: 'The name must be more than 6 and less than 30 characters long'
+                                },
+                                regexp: {
+                                    regexp: /^[a-zA-Z0-9_ -]+$/
+        //                            message: 'The username can only consist of alphabetical, number and underscore'
+                                }
+                            }
+                        }
+                    }
+                })
+
+                .on('success.form.fv', function(e) {
+                    // Prevent form submission
+                    e.preventDefault();
+
+                    // Get the form instance
+                    var $form = $(e.target);
+
+                    // Get the FormValidation instance
+                    var bv = $form.data('formValidation');
+
+                    // Use Ajax to submit form data
+                    $.post(
+                            'http://localhost/prodeRest/public/torneos',
+                            $form.serialize(),
+                            function(result) {
+                                var id = result['data']['id'];
+                                window.location.replace("torneo.php?id=" + id);
+                            }
+                    );
+                });
+    });
+
+
+
+</script>
+
 </body>
 </html>

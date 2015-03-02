@@ -50,6 +50,18 @@
 
 <div class="container">
 
+    <?php
+    $torneos_url = "http://localhost/prodeRest/public/torneos";
+    $json = file_get_contents( $torneos_url );
+    $obj = json_decode($json)->data;
+    if (!$obj) {
+        echo "<h2 align='center'>Ha ocurrido un error</h2>";
+        die();
+    } else {
+//        var_dump($obj);
+    }
+    ?>
+
     <div class="row">
         <div class="col-md-4 col-md-offset-4">
             &nbsp;
@@ -79,10 +91,11 @@
             <a href="#" class="list-group-item active">
                 Mis Torneos
             </a>
-            <a href="#" class="list-group-item">Los Vagos de Visa</a>
-            <a href="#" class="list-group-item">Alta Rendicion</a>
-            <a href="#" class="list-group-item">Los Magios</a>
-            <a href="#" class="list-group-item">Otro más</a>
+
+            <?php foreach($obj as $torneo) { ?>
+                <a href="torneo.php?id=<?php echo $torneo->id;?>" class="list-group-item"><?php echo $torneo->name;?></a>
+            <?php } ?>
+
         </div>
     </div>
 

@@ -92,7 +92,7 @@
                 <span class="glyphicon glyphicon-user" aria-hidden="true"></span>Invitar Amigo
             </button>
 
-            <p class="lead text-center">Clave: <i>'<?php echo $obj->pass; ?>'</i> </p>
+            <p class="lead text-center">Clave: <i><?php echo $obj->pass; ?></i> </p>
         </div>
     </div>
 

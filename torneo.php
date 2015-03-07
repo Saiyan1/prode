@@ -33,44 +33,72 @@
 <body>
 
 
-<nav class="navbar navbar-inverse navbar-fixed-top">
-    <div class="container">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="#">Prode</a>
-        </div>
-        <div id="navbar" class="collapse navbar-collapse">
-            <ul class="nav navbar-nav">
-                <li class="active"><a href="#">Mis Torneos</a></li>
-                <li><a href="#about">Crear Torneo</a></li>
-                <li><a href="#contact">Mi Perfil</a></li>
-            </ul>
-        </div><!--/.nav-collapse -->
-    </div>
-</nav>
+<script>
+
+    window.fbAsyncInit = function() {
+        FB.init({
+            appId      : '768260329897744',
+            xfbml      : true,
+            version    : 'v2.1'
+        });
+
+
+        function getURLParameter(name) {
+            return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null
+        }
+
+        FB.getLoginStatus(function(response) {
+            if (response.status !== 'connected') {
+                window.location = "index.php";
+            }
+            else {
+
+                FB.api(
+                    "/me",
+                    function (response) {
+                        if (response && !response.error) {
+
+                            $.ajax({
+                                type: "GET",
+                                url: "http://localhost/prodeRest/public/torneos/" + getURLParameter("id"),
+                                contentType: "application/json; charset=utf-8",
+                                crossDomain: true,
+                                dataType: "json",
+                                success: function (data, status, jqXHR) {
+                                    torneo = data.data;
+                                    document.title = "Torneo \"" + torneo.name + "\" en Tu Prode";
+                                    $("#torneoTitulo").html("\"" + torneo.name + "\"");
+                                    $("#torneoClave").html(torneo.pass);
+                                },
+                                error: function (jqXHR, status) {
+//                                    console.log(status);
+                                }
+                            });
+
+                        }
+                    }
+                );
+
+            }
+        });
+
+    };
+
+    (function(d, s, id){
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = "//connect.facebook.net/es_LA/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+</script>
+
+
+<?php require_once("menu.php"); ?>
+
 
 <div class="container">
 
-    <?php
-        $torneos_url = "http://localhost/prodeRest/public/torneos/";
-        if ( !isset($_GET['id']) || $_GET['id'] == "" || !is_numeric($_GET['id']) ){
-            echo "<h2 align='center'>No existe este torneo</h2>";
-            die();
-        } else {
-            $json = file_get_contents( $torneos_url . $_GET['id']);
-            $obj = json_decode($json)->data;
-            //Si no existe el Torneo
-            if (!$obj) {
-                echo "<h2 align='center'>No existe este torneo</h2>";
-                die();
-            }
-        }
-    ?>
 
     <div class="row">
         <div class="col-md-4 col-md-offset-4">
@@ -81,7 +109,7 @@
 
     <div class="row">
         <div class="col-md-4 col-md-offset-4">
-            <h2 class="text-center">"<?php echo $obj->name; ?>"</h2>
+            <h2 class="text-center" id="torneoTitulo"> Torneo </h2>
         </div>
     </div>
 
@@ -92,7 +120,7 @@
                 <span class="glyphicon glyphicon-user" aria-hidden="true"></span>Invitar Amigo
             </button>
 
-            <p class="lead text-center">Clave: <i><?php echo $obj->pass; ?></i> </p>
+            <p class="lead text-center">Clave: <i id="torneoClave"></i> </p>
         </div>
     </div>
 

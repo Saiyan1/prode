@@ -26,26 +26,47 @@
 
 <body>
 
-<nav class="navbar navbar-inverse navbar-fixed-top">
-    <div class="container">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="#">Prode</a>
-        </div>
-        <div id="navbar" class="collapse navbar-collapse">
-            <ul class="nav navbar-nav">
-                <li class="active"><a href="#">Mis Torneos</a></li>
-                <li><a href="#about">Crear Torneo</a></li>
-                <li><a href="#contact">Mi Perfil</a></li>
-            </ul>
-        </div><!--/.nav-collapse -->
-    </div>
-</nav>
+<script>
+    window.fbAsyncInit = function() {
+        FB.init({
+            appId      : '768260329897744',
+            xfbml      : true,
+            version    : 'v2.1'
+        });
+
+        var fb_id = "";
+
+        FB.getLoginStatus(function(response) {
+            if (response.status !== 'connected') {
+                window.location = "index.php";
+            }
+            else {
+                FB.api(
+                        "/me",
+                        function (response) {
+                            if (response && !response.error) {
+                                $("#fb_id").val(response.id);
+                            }
+                        }
+                );
+
+            }
+        });
+
+    };
+
+    (function(d, s, id){
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = "//connect.facebook.net/es_LA/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+</script>
+
+
+<?php require_once("menu.php");?>
+
 
 <div class="container">
 
@@ -67,7 +88,8 @@
         <div class="col-md-4 col-md-offset-4">
             <form id="torneoForm" method="post" action="">
 
-                <input type="hidden" name="user_id" id="user_id" value="999"/>      <!--TODO-->
+                <input type="hidden" name="user_id" id="user_id" value="999"/>
+                <input type="hidden" name="fb_id"   id="fb_id" value=""/>
 
                 <div class="form-group">
                     <label for="name">Nombre Torneo</label>
@@ -169,8 +191,10 @@
                             'http://localhost/prodeRest/public/torneos',
                             $form.serialize(),
                             function(result) {
-                                var id = result['data']['id'];
-                                window.location.replace("torneo.php?id=" + id);
+//                                console.log(result);
+//                                alert(result);
+//                                var id = result['data']['id'];
+                                window.location = "torneo.php?id=" + result.data.hash;
                             }
                     );
                 });

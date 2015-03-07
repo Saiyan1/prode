@@ -1,3 +1,6 @@
+<?php
+session_start();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -26,41 +29,67 @@
 
 <body>
 
+<script>
+    window.fbAsyncInit = function() {
+        FB.init({
+            appId      : '768260329897744',
+            xfbml      : true,
+            version    : 'v2.1'
+        });
 
-<nav class="navbar navbar-inverse navbar-fixed-top">
-    <div class="container">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a class="navbar-brand" href="#">Prode</a>
-        </div>
-        <div id="navbar" class="collapse navbar-collapse">
-            <ul class="nav navbar-nav">
-                <li class="active"><a href="#">Mis Torneos</a></li>
-                <li><a href="#about">Crear Torneo</a></li>
-                <li><a href="#contact">Mi Perfil</a></li>
-            </ul>
-        </div><!--/.nav-collapse -->
-    </div>
-</nav>
+
+        FB.getLoginStatus(function(response) {
+            if (response.status !== 'connected') {
+                window.location = "index.php";
+            }
+            else {
+
+                FB.api(
+                    "/me",
+                    function (response) {
+                        if (response && !response.error) {
+
+                            var fb_id = response.id;
+                            $.ajax({
+                                type: "GET",
+                                url: "http://localhost/prodeRest/public/torneos/usuario/" + fb_id,
+                                contentType: "application/json; charset=utf-8",
+                                crossDomain: true,
+                                dataType: "json",
+                                success: function (data, status, jqXHR) {
+                                        listaTorneos = data.data;
+                                        for (var i = 0, len = listaTorneos.length; i < len; i++) {
+                                            $("#listaTorneos").append("<a href='torneo.php?id="+ listaTorneos[i].hash +"' class='list-group-item'>" + listaTorneos[i].name + "</a>");
+                                        }
+                                },
+                                error: function (jqXHR, status) {
+//                                    console.log(status);
+                                }
+                            });
+
+                        }
+                    }
+                );
+
+            }
+        });
+
+    };
+
+    (function(d, s, id){
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id)) return;
+        js = d.createElement(s); js.id = id;
+        js.src = "//connect.facebook.net/es_LA/sdk.js";
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+</script>
+
+
+<?php require_once("menu.php");?>
+
 
 <div class="container">
-
-    <?php
-    $torneos_url = "http://localhost/prodeRest/public/torneos";
-    $json = file_get_contents( $torneos_url );
-    $obj = json_decode($json)->data;
-    if (!$obj) {
-        echo "<h2 align='center'>Ha ocurrido un error</h2>";
-        die();
-    } else {
-//        var_dump($obj);
-    }
-    ?>
 
     <div class="row">
         <div class="col-md-4 col-md-offset-4">
@@ -71,7 +100,7 @@
 
     <div class="row">
         <div class="col-md-4 col-md-offset-4">
-            <button type="button" class="btn btn-danger btn-lg center-block" onclick="location.href = 'torneoCrear.html';">
+            <button type="button" class="btn btn-danger btn-lg center-block" onclick="location.href = 'torneoCrear.php';">
                 <span class="glyphicon glyphicon-plus-sign" aria-hidden="true"></span> Crear Torneo
             </button>
         </div>
@@ -92,9 +121,9 @@
                 Mis Torneos
             </a>
 
-            <?php foreach($obj as $torneo) { ?>
-                <a href="torneo.php?id=<?php echo $torneo->id;?>" class="list-group-item"><?php echo $torneo->name;?></a>
-            <?php } ?>
+            <span id="listaTorneos">
+
+            </span>
 
         </div>
     </div>

@@ -47,6 +47,26 @@
             return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search)||[,""])[1].replace(/\+/g, '%20'))||null
         }
 
+
+        $( document ).ready(function() {
+            $.ajax({
+                type: "GET",
+                url: "http://localhost/prodeRest/public/torneos/" + getURLParameter("id"),
+                contentType: "application/json; charset=utf-8",
+                crossDomain: true,
+                dataType: "json",
+                success: function (data, status, jqXHR) {
+                    torneo = data.data;
+                    document.title = "Torneo \"" + torneo.name + "\" en Tu Prode";
+                    $("#torneoTitulo").html("\"" + torneo.name + "\"");
+                },
+                error: function (jqXHR, status) {
+                                    console.log(status);
+                }
+            });
+        });
+
+
         FB.getLoginStatus(function(response) {
             if (response.status !== 'connected') {
                 window.location = "index.php";
@@ -58,22 +78,22 @@
                     function (response) {
                         if (response && !response.error) {
 
-                            $.ajax({
-                                type: "GET",
-                                url: "http://localhost/prodeRest/public/torneos/" + getURLParameter("id"),
-                                contentType: "application/json; charset=utf-8",
-                                crossDomain: true,
-                                dataType: "json",
-                                success: function (data, status, jqXHR) {
-                                    torneo = data.data;
-                                    document.title = "Torneo \"" + torneo.name + "\" en Tu Prode";
-                                    $("#torneoTitulo").html("\"" + torneo.name + "\"");
-                                    $("#torneoClave").html(torneo.pass);
-                                },
-                                error: function (jqXHR, status) {
+//                            $.ajax({
+//                                type: "GET",
+//                                url: "http://localhost/prodeRest/public/torneos/" + getURLParameter("id"),
+//                                contentType: "application/json; charset=utf-8",
+//                                crossDomain: true,
+//                                dataType: "json",
+//                                success: function (data, status, jqXHR) {
+//                                    torneo = data.data;
+//                                    document.title = "Torneo \"" + torneo.name + "\" en Tu Prode";
+//                                    $("#torneoTitulo").html("\"" + torneo.name + "\"");
+//                                    $("#torneoClave").html(torneo.pass);
+//                                },
+//                                error: function (jqXHR, status) {
 //                                    console.log(status);
-                                }
-                            });
+//                                }
+//                            });
 
                         }
                     }

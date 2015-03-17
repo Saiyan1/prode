@@ -14,6 +14,7 @@
                 <li class="active"><a id="button" href="misTorneos.php" >Mis Torneos</a></li>
                 <li><a href="torneoCrear.php">Crear Torneo</a></li>
                 <li><a href="#contact">Mi Perfil</a></li>
+                <li><a href="fechaCrear.php">Crear Fecha</a></li>
             </ul>
         </div><!--/.nav-collapse -->
     </div>

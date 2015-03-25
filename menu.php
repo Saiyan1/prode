@@ -15,6 +15,7 @@
                 <li><a href="torneoCrear.php">Crear Torneo</a></li>
                 <li><a href="#contact">Mi Perfil</a></li>
                 <li><a href="fechaCrear.php">Crear Fecha</a></li>
+                <li><a href="listadoParaRegistrar.php">Registrar Resultados</a></li>
             </ul>
         </div><!--/.nav-collapse -->
     </div>

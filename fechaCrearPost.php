@@ -1,8 +1,5 @@
 <?php
-    $servername = "localhost";
-    $username = "root";
-    $password = "";
-    $dbname = "prode";
+require_once("conx.php");
 
     // Create connection
     $conn = new mysqli($servername, $username, $password, $dbname);
